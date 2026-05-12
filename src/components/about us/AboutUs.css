@@ -1,0 +1,155 @@
+/* ===== HERO ===== */
+
+.about-hero {
+  background: #e0e0e0;
+  padding: 120px 0 70px;
+}
+
+.about-hero-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+}
+
+.about-hero-card {
+  background: #ffffff;
+  border-radius: 56px;
+  padding: 80px;
+
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.about-hero-text h1 {
+  font-size: 44px;
+  font-weight: 900;
+  margin-bottom: 24px;
+  color: #000;
+}
+
+.about-hero-text p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  color: #222;
+}
+
+.about-hero-image img {
+  width: 85%; 
+}
+
+/* ===== STICKY HELP ===== */
+
+.about-sticky-help {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: #1a18ff;
+  color: #ffffff;
+  text-decoration: none;
+
+  padding: 16px 24px;
+  border-radius: 32px 0 0 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  font-weight: 900;
+  z-index: 1000;
+}
+
+/* ===== PRINCIPLES ===== */
+
+.about-principles {
+  background: #e0e0e0;
+  padding: 70px 0;
+}
+
+.about-principles-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.about-principles-card {
+  background: #ffffff;
+  border-radius: 56px;
+  padding: 80px;
+
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.about-principles-text h2 {
+  font-size: 40px;
+  font-weight: 900;
+  margin-bottom: 32px;
+  color: #000;
+}
+
+.about-principles-text p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  color: #222;
+}
+
+.about-principles-image img {
+  width: 100%;
+}
+
+/* ===== CTA ===== */
+
+.about-cta {
+  background: #000;
+  padding: 80px 0 120px;
+}
+
+.about-cta-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 32px;
+
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  color: #ffffff;
+}
+
+.about-cta-text {
+  font-size: 32px;
+  font-weight: 900;
+  margin-left: auto;
+}
+
+.about-cta-arrow-img {
+  width: 400px;
+  height: auto;
+  display: block;
+  padding-left: 70px;
+}
+
+.about-cta-button {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #1a18ff;
+  color: #ffffff;
+  text-decoration: none;
+
+  padding: 14px 36px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 900;
+}

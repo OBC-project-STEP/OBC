@@ -1,0 +1,90 @@
+.article-card {
+    background-color: #ffffff;
+    border-radius: 36px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .article-image {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .article-image img {
+    width: 100%;
+    display: block;
+  }
+  
+  /* Контейнер бейджей */
+  .article-badges {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    z-index: 2;
+  }
+  
+  /* Бейдж общий */
+  .article-badge {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #000;
+    white-space: nowrap;
+  }
+  
+  /* Варианты как в макете */
+  .article-badge.green {
+    background: #20d000;
+  }
+  
+  .article-badge.yellow {
+    background: #ffeb00;
+  }
+  
+  .article-badge.blue {
+    background: #1c1cff;
+    color: #fff;
+  }
+  
+  .article-badge.red {
+    background: #ff0000;
+    color: #000;
+  }
+  
+  .article-content {
+    padding: 18px 18px 10px;
+    color: #000000;
+  }
+  
+  .article-content h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    font-weight: 900;
+    color: #000000;
+  }
+  
+  .article-content p {
+    font-size: 14px;
+    color: #222;
+    line-height: 1.45;
+  }
+  
+  .article-actions {
+    margin-top: auto;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .article-actions a {
+    font-weight: 900;
+    color: #000;
+    text-decoration: underline;
+  }
+  

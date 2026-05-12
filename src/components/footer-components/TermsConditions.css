@@ -1,0 +1,177 @@
+.termsPage
+{
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 120px 20px 100px 20px;
+
+    background-image: url("../../assets/images/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.termsContainer
+{
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto; /* 👈 ГЛАВНЫЙ ФИКС ЦЕНТРА */
+
+    background: #ECECEC;
+
+    border-radius: 60px;
+
+    padding: 70px 80px;
+
+    box-sizing: border-box;
+}
+
+/* TITLE — подняли вверх */
+.termsTitle
+{
+    font-size: 52px;
+    font-weight: 800;
+
+    text-align: center;
+
+    margin-top: -15px;
+    margin-bottom: 40px;
+
+    color: #000000;
+}
+
+.termsIntro
+{
+    font-size: 19px;
+    line-height: 1.5;
+
+    margin-bottom: 40px;
+
+    color: #1E1E1E;
+}
+
+.termsTextBlock
+{
+    margin-bottom: 50px;
+}
+
+.termsTextBlock h2
+{
+    font-size: 26px;
+    font-weight: 600;
+
+    margin-top: 25px;
+    margin-bottom: 10px;
+
+    color: #000000;
+}
+
+.termsTextBlock p
+{
+    font-size: 18px;
+    line-height: 1.6;
+
+    color: #1E1E1E;
+}
+
+.termsBottom
+{
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-top: 60px;
+}
+
+.termsBottom h3
+{
+    font-size: 34px;
+    font-weight: 700;
+
+    margin-bottom: 15px;
+
+    color: #000000;
+}
+
+.termsBottom p
+{
+    font-size: 17px;
+
+    margin-bottom: 25px;
+
+    color: #1E1E1E;
+}
+
+.termsButton
+{
+    border: none;
+
+    background: linear-gradient(90deg, #0015FF 0%, #2D2DFF 100%);
+
+    color: white;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    padding: 18px 40px;
+
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.termsButton:hover
+{
+    transform: scale(1.03);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px)
+{
+    .termsContainer
+    {
+        padding: 50px 35px;
+        border-radius: 40px;
+    }
+
+    .termsTitle
+    {
+        font-size: 38px;
+        margin-top: -8px;
+    }
+
+    .termsIntro
+    {
+        font-size: 17px;
+    }
+
+    .termsTextBlock h2
+    {
+        font-size: 22px;
+    }
+
+    .termsTextBlock p
+    {
+        font-size: 16px;
+    }
+
+    .termsBottom h3
+    {
+        font-size: 26px;
+    }
+
+    .termsButton
+    {
+        width: 100%;
+        font-size: 20px;
+    }
+}

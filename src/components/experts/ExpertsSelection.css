@@ -1,0 +1,72 @@
+.experts-selection {
+  background: #ffffff;
+  padding: 80px 32px;
+}
+
+.experts-selection-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.experts-selection-title {
+  font-size: 36px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  color: #000;
+}
+
+.experts-selection-subtitle {
+  font-size: 18px;
+  color: #222;
+  margin-bottom: 48px;
+  line-height: 1.6;
+}
+
+.experts-selection-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.experts-selection-card {
+  background: #e0e0e0;
+  border-radius: 24px;
+  padding: 28px 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.experts-selection-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
+}
+
+.experts-selection-card p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #222;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .experts-selection {
+    padding: 60px 20px;
+  }
+
+  .experts-selection-title {
+    font-size: 28px;
+  }
+
+  .experts-selection-subtitle {
+    font-size: 16px;
+  }
+
+  .experts-selection-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

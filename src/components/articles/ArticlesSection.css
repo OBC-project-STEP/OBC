@@ -1,0 +1,85 @@
+.articles-section {
+  background-color: #e0e0e0;
+  width: 100%;
+
+  padding-top: var(--space-xl);
+  padding-bottom: 50px; 
+}
+
+.articles-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-m);
+}
+
+.articles-title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 60px;
+  color: #000000;
+}
+
+/* СЕТКА */
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+/* ===== SUPPORT BUTTON ===== */
+
+.support-btn {
+  position: fixed;
+  top: 140px;
+  right: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  background: var(--color-accent);
+  color: #fff;
+  text-decoration: none;
+
+  padding: 14px 18px 14px 14px;
+  border-radius: 999px 0 0 999px;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.support-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+}
+
+.support-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .articles-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .support-btn {
+    position: static;
+    margin: 0 auto var(--space-l);
+    border-radius: 999px;
+  }
+}
+

@@ -1,0 +1,17 @@
+:root {
+  /* Цвета */
+  --color-bg: #FFFFFF;
+  --color-bg-alt: #C0BFBF;
+  --color-text: #000000;
+  --color-accent: #0D00FF;
+
+  /* Отступы */
+  --space-xs: 4px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 32px;
+  --space-xl: 64px;
+
+  /* Шрифт */
+  --font-main: 'Inter', sans-serif;
+}

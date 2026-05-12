@@ -1,0 +1,188 @@
+/* ===== PAGE ===== */
+
+.knowledge-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #e0e0e0;
+  padding-top: 80px;
+}
+
+/* ===== HERO ===== */
+
+.knowledge-hero {
+  width: 100%;
+  height: 600px;
+  background-size: cover;
+  background-position: center top;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 64px;
+}
+
+.knowledge-hero-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.knowledge-hero-card {
+  width: 100%;
+  max-width: 900px;
+  background: #1a18ff;
+  border-radius: 56px;
+  padding: 40px 56px;
+  text-align: center;
+}
+
+.knowledge-hero-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.knowledge-hero-text {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #ffffff;
+}
+
+/* ===== SEARCH ===== */
+
+.knowledge-search {
+  margin-top: -220px;
+  padding-bottom: 24px; /* ✅ МЕНЬШЕ ОТСТУП СНИЗУ */
+  text-align: center;
+}
+
+.knowledge-search-title {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #000000;
+}
+
+.knowledge-search-input {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.knowledge-search-input::before {
+  content: "🔍";
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.4;
+}
+
+.knowledge-search-input input {
+  width: 100%;
+  padding: 20px 24px 20px 60px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
+
+  background: #ffffff;            /* ✅ СВЕТЛЫЙ ФОН */
+  color: #000000;                 /* нормальный текст */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); /* мягкая тень как в макете */
+}
+
+.knowledge-search-input input::placeholder {
+  color: #9a9a9a;
+}
+
+/* ===== CATEGORIES ===== */
+
+.knowledge-categories {
+  background: #e0e0e0;
+  padding: 24px 0 16px; /* ✅ МЕНЬШЕ ОТСТУП ДО СЛЕД. СЕКЦИИ */
+  margin: 0;
+}
+
+.knowledge-categories-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 16px;
+
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* ===== CATEGORY CARD ===== */
+
+.knowledge-category-card {
+  width: 260px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.knowledge-category-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #000000;
+}
+
+.knowledge-category-card p {
+  font-size: 16px;
+  line-height: 1.4;
+  color: #000000;
+}
+
+/* ===== ACCESS CTA ===== */
+
+.access-cta {
+  width: 100%;
+  padding: 96px 0;
+  background-size: cover;
+  background-position: center;
+
+}
+
+.access-cta-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px 64px;
+  background: #cecece;
+  border-radius: 64px;
+  text-align: center;
+}
+
+.access-cta-title {
+  font-size: 36px;
+  font-weight: 900;
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+.access-cta-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  color: #000000;
+}
+
+.access-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 32px;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+
+  background: #1a18ff;
+  color: #ffffff;
+}

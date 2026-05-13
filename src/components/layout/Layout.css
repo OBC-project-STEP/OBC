@@ -1,8 +1,12 @@
+@import "../../styles/variables.css";
+
 .layout {
   min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
+  /* Контент не заходить під position: fixed шапку */
+  padding-top: var(--site-header-offset);
 }
 
 .layout-content {

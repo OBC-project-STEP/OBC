@@ -22,6 +22,7 @@ import RecoveryEmailPage from "./Pages/RecoveryEmailPage";
 import RecoveryCodePage from "./Pages/RecoveryCodePage";
 import RecoveryNewPasswordPage from "./Pages/RecoveryNewPasswordPage";
 import ProfilePage from "./Pages/ProfilePage";
+import ArticlePage from "./Pages/ArticlePage";
 import TermsConditions from "./components/footer-components/TermsConditions";
 import Legal from "./components/footer-components/Legal";
 import Certification from "./components/footer-components/Certification";
@@ -67,6 +68,7 @@ function App()
                 <Route path="/experts" element={<Experts />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/contacts" element={<Contacts />} />
+                <Route path="/article/:slug" element={<ArticlePage />} />
 
                 <Route path="/terms-conditions" element={<TermsConditions />} />
                 <Route path="/legal" element={<Legal />} />

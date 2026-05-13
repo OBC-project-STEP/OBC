@@ -14,4 +14,19 @@
 
   /* Шрифт */
   --font-main: 'Inter', sans-serif;
+
+  /* Відступ контенту під фіксовану шапку (.site-header) */
+  --site-header-offset: 100px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --site-header-offset: 210px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --site-header-offset: 280px;
+  }
 }

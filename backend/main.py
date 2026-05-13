@@ -86,6 +86,10 @@ class ProfileUpdateBody(BaseModel):
     phone: str | None = Field(default=None, max_length=50)
 
 
+class SavedArticleBody(BaseModel):
+    slug: str = Field(min_length=1, max_length=120, pattern=r"^[a-z0-9-]+$")
+
+
 class AdminCreateUserBody(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6)
@@ -192,6 +196,20 @@ def require_staff(current_user: dict = Depends(get_current_user)) -> dict:
 StaffUser = Annotated[dict, Depends(require_staff)]
 
 
+def require_end_user(current_user: dict = Depends(get_current_user)) -> dict:
+    """Лише роль user — збережені статті не для admin/superadmin."""
+    role = current_user.get("role") or "user"
+    if role != "user":
+        raise HTTPException(
+            status_code=403,
+            detail="Збережені статті доступні лише звичайним користувачам",
+        )
+    return current_user
+
+
+EndUser = Annotated[dict, Depends(require_end_user)]
+
+
 # --- Routes ---
 
 
@@ -295,6 +313,59 @@ def update_me(body: ProfileUpdateBody, current: CurrentUser):
     u = dict(row)
     u["role"] = u.get("role") or "user"
     return {"user": u}
+
+
+@app.get("/auth/me/saved-articles")
+def list_saved_articles(user: EndUser):
+    uid = user["id"]
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT article_slug, created_at
+            FROM user_saved_articles
+            WHERE user_id = ?
+            ORDER BY datetime(created_at) DESC
+            """,
+            (uid,),
+        ).fetchall()
+    return {
+        "articles": [
+            {"slug": r["article_slug"], "saved_at": r["created_at"]} for r in rows
+        ]
+    }
+
+
+@app.post("/auth/me/saved-articles")
+def add_saved_article(body: SavedArticleBody, user: EndUser):
+    uid = user["id"]
+    slug = body.slug.strip()
+    with get_db() as conn:
+        cur = conn.execute(
+            """
+            INSERT OR IGNORE INTO user_saved_articles (user_id, article_slug)
+            VALUES (?, ?)
+            """,
+            (uid, slug),
+        )
+        was_new = cur.rowcount > 0
+    return {"ok": True, "slug": slug, "was_new": was_new}
+
+
+@app.delete("/auth/me/saved-articles/{slug}")
+def remove_saved_article(slug: str, user: EndUser):
+    uid = user["id"]
+    s = slug.strip()
+    if not s or len(s) > 120:
+        raise HTTPException(status_code=400, detail="Некоректний slug")
+    with get_db() as conn:
+        conn.execute(
+            """
+            DELETE FROM user_saved_articles
+            WHERE user_id = ? AND article_slug = ?
+            """,
+            (uid, s),
+        )
+    return {"ok": True}
 
 
 @app.post("/auth/forgot-password")

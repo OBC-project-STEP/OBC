@@ -1,5 +1,5 @@
-/* Header container */
-header {
+/* Лише шапка сайту — не всі <header> на сторінці (статті, адмінка тощо) */
+.site-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -99,17 +99,12 @@ nav a:hover {
   pointer-events: none;
 }
 
-/* Prevent main content from hiding under header */
-body {
-  margin: 0;
-  padding-top: 90px;
-}
-
+/* Відступ під шапку: див. --site-header-offset у Layout.css + variables.css */
 
 /* ---------- Responsive styles ---------- */
 /* For screens smaller than 768px */
 @media (max-width: 768px) {
-  header {
+  .site-header {
     flex-direction: column;
     align-items: center;
     padding: 20px;
@@ -139,7 +134,7 @@ body {
 
 /* For very small screens (phones under 480px) */
 @media (max-width: 480px) {
-  header {
+  .site-header {
     padding: 15px;
     gap: 10px;
   }

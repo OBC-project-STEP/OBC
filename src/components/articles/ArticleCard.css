@@ -87,4 +87,41 @@
     color: #000;
     text-decoration: underline;
   }
+
+  .article-actions-linklike {
+    font-weight: 900;
+    color: #000;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+  }
+
+  .article-actions-linklike:hover:not(:disabled) {
+    color: #0d00ff;
+  }
+
+  .article-actions-linklike:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .article-actions-muted {
+    font-weight: 900;
+    color: #999;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+  }
+
+  .article-save-hint {
+    margin: 0;
+    padding: 0 18px 12px;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #0d5c26;
+    font-weight: 600;
+  }
   

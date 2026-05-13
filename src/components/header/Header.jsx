@@ -7,7 +7,7 @@ export default function Header() {
   const { user } = useAuth();
 
   return (
-    <header>
+    <header className="site-header">
       <div className="logo">
         <Link to="/">
           <img src={logo} alt="OBC Logo" />

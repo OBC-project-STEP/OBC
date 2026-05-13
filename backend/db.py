@@ -14,6 +14,7 @@ def _connect():
     path = Path(__file__).resolve().parent / settings.database_path
     conn = sqlite3.connect(path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
 
@@ -119,6 +120,7 @@ def init_db():
         _migrate_fix_null_roles(conn)
         _migrate_legacy_superadmin_email(conn)
         _ensure_articles_table(conn)
+        _ensure_user_saved_articles_table(conn)
         _seed_demo_articles_if_empty(conn)
 
 
@@ -133,6 +135,22 @@ def _ensure_articles_table(conn: sqlite3.Connection) -> None:
             created_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
         CREATE INDEX IF NOT EXISTS idx_articles_created_at ON articles(created_at DESC);
+        """
+    )
+
+
+def _ensure_user_saved_articles_table(conn: sqlite3.Connection) -> None:
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS user_saved_articles (
+            user_id INTEGER NOT NULL,
+            article_slug TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            PRIMARY KEY (user_id, article_slug),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_user_saved_user
+        ON user_saved_articles(user_id, created_at DESC);
         """
     )
 

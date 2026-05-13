@@ -20,13 +20,6 @@
   color: #000000;
 }
 
-/* СЕТКА */
-.articles-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
-}
-
 /* ===== SUPPORT BUTTON ===== */
 
 .support-btn {
@@ -71,11 +64,6 @@
 }
 
 @media (max-width: 768px) {
-  .articles-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
   .support-btn {
     position: static;
     margin: 0 auto var(--space-l);

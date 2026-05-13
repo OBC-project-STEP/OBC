@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiPatch } from "../api/client";
+import { fetchSavedArticles, removeSavedArticle } from "../api/savedArticles";
+import { getHomeArticleBySlug } from "../data/homeArticles";
 import { useAuth } from "../context/AuthContext";
 import "./ProfilePage.css";
 
@@ -29,6 +31,9 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [savedArticles, setSavedArticles] = useState([]);
+  const [savedLoading, setSavedLoading] = useState(false);
+  const [savedError, setSavedError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -51,6 +56,39 @@ export default function ProfilePage() {
     setPhone(user.phone ?? "");
   }, [user]);
 
+  useEffect(() => {
+    if (!user || syncing || user.role !== "user") {
+      if (user && user.role !== "user") setSavedArticles([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setSavedLoading(true);
+      setSavedError("");
+      try {
+        const data = await fetchSavedArticles();
+        if (!cancelled) setSavedArticles(data.articles ?? []);
+      } catch (e) {
+        if (!cancelled) setSavedError(e.message || "Не вдалося завантажити збережені статті");
+      } finally {
+        if (!cancelled) setSavedLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, syncing]);
+
+  const handleRemoveSaved = async (slug) => {
+    setSavedError("");
+    try {
+      await removeSavedArticle(slug);
+      setSavedArticles((prev) => prev.filter((a) => a.slug !== slug));
+    } catch (e) {
+      setSavedError(e.message || "Не вдалося прибрати зі списку");
+    }
+  };
+
   const initials = useMemo(
     () => initialsFromParts(name, surname, user?.email),
     [name, surname, user?.email]
@@ -59,6 +97,9 @@ export default function ProfilePage() {
     () => displayNameFromParts(name, surname, user?.email),
     [name, surname, user?.email]
   );
+
+  /** Збережені статті — лише для звичайного користувача (не admin / superadmin) */
+  const isRegularUser = user?.role === "user";
 
   const handleReset = () => {
     if (!user) return;
@@ -183,11 +224,75 @@ export default function ProfilePage() {
             </button>
           </div>
         </form>
+      </div>
 
-        {user?.id != null ? (
-          <p className="profile-meta">Обліковий запис №{user.id}</p>
-        ) : null}
+      {isRegularUser ? (
+        <section className="profile-saved-outer" aria-labelledby="profile-saved-heading">
+          <h2 id="profile-saved-heading" className="profile-saved-outer-title">
+            Список статей
+          </h2>
 
+          <div className="profile-saved-panel">
+            {savedLoading ? (
+              <p className="profile-saved-panel-hint">Завантаження…</p>
+            ) : null}
+            {savedError ? (
+              <div className="profile-alert profile-alert--error" role="alert">
+                {savedError}
+              </div>
+            ) : null}
+
+            {!savedLoading && savedArticles.length === 0 ? (
+              <p className="profile-saved-panel-empty">
+                Поки немає збережених матеріалів. На головній або в базі знань натисніть «Зберегти на потім» біля статті —
+                вона з’явиться тут.
+              </p>
+            ) : null}
+
+            {savedArticles.length > 0 ? (
+              <div className="profile-saved-grid">
+                {savedArticles.map((row) => {
+                  const meta = getHomeArticleBySlug(row.slug);
+                  const title = meta?.title ?? row.slug;
+                  const preview = meta?.description ?? "";
+                  return (
+                    <article key={row.slug} className="profile-saved-card">
+                      <div className="profile-saved-card-image-wrap">
+                        {meta?.image ? (
+                          <img src={meta.image} alt={title} className="profile-saved-card-img" />
+                        ) : (
+                          <div className="profile-saved-card-img profile-saved-card-img--placeholder" />
+                        )}
+                      </div>
+                      <p className="profile-saved-card-text">{preview || title}</p>
+                      <div className="profile-saved-card-actions">
+                        <span
+                          className="profile-saved-card-link profile-saved-card-link--disabled"
+                          title="Вже збережено у профілі"
+                        >
+                          Зберегти
+                        </span>
+                        <Link className="profile-saved-card-link" to={`/article/${row.slug}`}>
+                          Читати
+                        </Link>
+                        <button
+                          type="button"
+                          className="profile-saved-card-link profile-saved-card-link--danger"
+                          onClick={() => handleRemoveSaved(row.slug)}
+                        >
+                          Видалити
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
+      <div className="profile-card profile-card--tail">
         <div className="profile-actions">
           <Link to="/" className="profile-btn profile-btn--ghost">
             На головну

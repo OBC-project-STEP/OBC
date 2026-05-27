@@ -506,6 +506,33 @@ def _article_row_public(row: sqlite3.Row) -> dict:
     }
 
 
+@app.get("/articles")
+def public_list_articles():
+    """Публічний список статей (для звичайних користувачів/гостей)."""
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, title, body, image, created_at
+            FROM articles
+            ORDER BY datetime(created_at) DESC, id DESC
+            """
+        ).fetchall()
+    return {"articles": [_article_row_public(r) for r in rows]}
+
+
+@app.get("/articles/{article_id}")
+def public_get_article(article_id: str):
+    """Публічне читання статті за id."""
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT id, title, body, image, created_at FROM articles WHERE id = ?",
+            (article_id,),
+        ).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Статтю не знайдено")
+    return {"article": _article_row_public(row)}
+
+
 @app.get("/admin/articles")
 def admin_list_articles(staff: StaffUser):
     with get_db() as conn:

@@ -354,6 +354,279 @@ a.profile-saved-card-link {
   }
 }
 
+/* --- План підписки (під збереженими статтями) --- */
+
+.profile-plan-panel {
+  max-width: 1200px;
+  margin: 24px auto 0;
+  background: #e8e8e8;
+  border-radius: 28px;
+  padding: 28px 32px 32px;
+  box-sizing: border-box;
+}
+
+.profile-plan-label {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #111;
+}
+
+.profile-plan-title {
+  margin: 0 0 14px;
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #111;
+}
+
+.profile-plan-desc {
+  margin: 0 0 22px;
+  max-width: 920px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #222;
+}
+
+.profile-plan-payment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+  margin-bottom: 22px;
+}
+
+.profile-plan-payment-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111;
+  white-space: nowrap;
+}
+
+.profile-plan-card-input {
+  flex: 1 1 220px;
+  min-width: 180px;
+  max-width: 340px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #999;
+  outline: none;
+}
+
+.profile-plan-change-btn {
+  flex-shrink: 0;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  background: #0d00ff;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.profile-plan-change-btn:hover {
+  opacity: 0.92;
+}
+
+.profile-plan-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.profile-plan-btn {
+  padding: 16px 20px;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.profile-plan-btn:hover {
+  opacity: 0.92;
+}
+
+.profile-plan-btn--cancel {
+  background: #ffb8b8;
+}
+
+.profile-plan-btn--pause {
+  background: #fff4b8;
+}
+
+.profile-plan-notice {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #e6f7ea;
+  color: #0d5c26;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.profile-plan-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.profile-plan-modal {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: #e8e8e8;
+  border-radius: 28px;
+  padding: 32px 28px 28px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+}
+
+.profile-plan-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #111;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.profile-plan-modal-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.profile-plan-modal-title {
+  margin: 0 0 18px;
+  padding-right: 36px;
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: #111;
+}
+
+.profile-plan-modal-text {
+  margin: 0 0 14px;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #222;
+}
+
+.profile-plan-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.profile-plan-modal-actions--stack {
+  flex-direction: column;
+}
+
+.profile-plan-modal-btn {
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.profile-plan-modal-btn:hover {
+  opacity: 0.92;
+}
+
+.profile-plan-modal-btn--pause {
+  background: #b8ffb8;
+}
+
+.profile-plan-modal-btn--cancel {
+  background: #ffb8b8;
+}
+
+.profile-plan-modal-duration {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.profile-plan-duration-btn {
+  flex: 1 1 120px;
+  min-width: 120px;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #0d00ff;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.profile-plan-duration-btn:hover {
+  opacity: 0.92;
+}
+
+.profile-plan-modal-footnote {
+  margin: 18px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+@media (max-width: 720px) {
+  .profile-plan-panel {
+    padding: 22px 18px 24px;
+    border-radius: 22px;
+  }
+
+  .profile-plan-payment {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-plan-card-input {
+    max-width: none;
+  }
+
+  .profile-plan-change-btn {
+    width: 100%;
+  }
+
+  .profile-plan-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 .profile-actions {
   display: flex;
   flex-wrap: wrap;

@@ -96,3 +96,12 @@ export const homeArticles = [
 export function getHomeArticleBySlug(slug) {
   return homeArticles.find((a) => a.slug === slug) ?? null;
 }
+
+/** Демо-статті в SQLite мають id "1"…"7" і порожній body — мапимо на slug з повним текстом */
+const LEGACY_DB_ID_TO_SLUG = Object.fromEntries(
+  homeArticles.map((a) => [String(a.id), a.slug])
+);
+
+export function getLegacySlugForDbId(id) {
+  return LEGACY_DB_ID_TO_SLUG[String(id)] ?? null;
+}

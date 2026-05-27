@@ -3,6 +3,15 @@ import { apiGet, apiPost, getStoredToken, setStoredToken } from "../api/client";
 
 const AuthContext = createContext(null);
 
+const AUTH_RETRY_ATTEMPTS = 8;
+const AUTH_RETRY_DELAY_MS = 750;
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,15 +23,35 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    try {
-      const data = await apiGet("/auth/me");
-      setUser(data.user);
-    } catch {
-      setStoredToken(null);
-      setUser(null);
-    } finally {
-      setLoading(false);
+
+    setLoading(true);
+
+    for (let attempt = 0; attempt < AUTH_RETRY_ATTEMPTS; attempt += 1) {
+      try {
+        const data = await apiGet("/auth/me");
+        setUser(data.user);
+        setLoading(false);
+        return;
+      } catch (err) {
+        if (err?.status === 401) {
+          setStoredToken(null);
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
+        const canRetry =
+          err?.isNetworkError && attempt < AUTH_RETRY_ATTEMPTS - 1;
+        if (!canRetry) {
+          // Токен зберігаємо — після перезапуску бекенду сесія відновиться
+          setLoading(false);
+          return;
+        }
+        await wait(AUTH_RETRY_DELAY_MS);
+      }
     }
+
+    setLoading(false);
   }, []);
 
   useEffect(() => {

@@ -20,9 +20,15 @@ async function parseResponse(res) {
     }
   }
   if (!res.ok) {
-    throw new Error(formatDetail(data?.detail) || res.statusText);
+    const err = new Error(formatDetail(data?.detail) || res.statusText);
+    err.status = res.status;
+    throw err;
   }
   return data;
+}
+
+function isNetworkError(err) {
+  return err instanceof TypeError || err?.name === "TypeError";
 }
 
 export function getStoredToken() {
@@ -40,8 +46,17 @@ export async function apiGet(path, { useAuth = true } = {}) {
     const auth = getStoredToken();
     if (auth) headers.Authorization = `Bearer ${auth}`;
   }
-  const res = await fetch(`${API_BASE}${path}`, { method: "GET", headers });
-  return parseResponse(res);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, { method: "GET", headers });
+    return parseResponse(res);
+  } catch (err) {
+    if (isNetworkError(err)) {
+      const netErr = new Error("Немає з’єднання з сервером");
+      netErr.isNetworkError = true;
+      throw netErr;
+    }
+    throw err;
+  }
 }
 
 export async function apiPost(path, body, { useAuth = true } = {}) {

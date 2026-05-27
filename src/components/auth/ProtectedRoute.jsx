@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
   const location = useLocation();
   const hasToken = Boolean(getStoredToken());
 
-  if (loading) {
+  if (loading && !user) {
     return <div className="auth-loading">Завантаження…</div>;
   }
 

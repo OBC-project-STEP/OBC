@@ -452,6 +452,7 @@
 }
 
 .admin-users__card--table {
+  margin-top: 12px;
   overflow: hidden;
 }
 

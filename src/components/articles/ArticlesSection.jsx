@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import ArticlesCarousel from "./ArticlesCarousel";
 import { fetchArticles } from "../../api/articles";
 import { apiArticleToCardMeta } from "../../utils/articleMeta";
+import { filterArticlesByQuery } from "../../utils/filterArticles";
 import "./ArticlesSection.css";
 
-export default function ArticlesSection() {
+export default function ArticlesSection({ searchQuery = "" }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [articles, setArticles] = useState([]);
@@ -42,6 +43,7 @@ export default function ArticlesSection() {
         badge: "Безкоштовно",
         title: meta.title,
         description: meta.description,
+        body: a.body ?? "",
         primaryAction: "Прочитати",
         primaryHref: meta.readHref,
         secondaryAction: "Зберегти на потім",
@@ -49,13 +51,28 @@ export default function ArticlesSection() {
     });
   }, [articles]);
 
+  const visibleArticles = useMemo(
+    () => filterArticlesByQuery(uiArticles, searchQuery),
+    [uiArticles, searchQuery]
+  );
+
+  const hasSearch = searchQuery.trim().length > 0;
+
   return (
     <section className="articles-section">
       <h2 className="articles-title">Найкращі Пропозиції</h2>
 
-      <div className="articles-inner">
+      <div className={`articles-inner${!loading ? " articles-inner--ready" : ""}`}>
         {error ? <p style={{ margin: 0 }}>{error}</p> : null}
-        {loading ? <p style={{ margin: 0 }}>Завантаження…</p> : <ArticlesCarousel articles={uiArticles} />}
+        {loading ? (
+          <p style={{ margin: 0 }}>Завантаження…</p>
+        ) : visibleArticles.length > 0 ? (
+          <ArticlesCarousel articles={visibleArticles} />
+        ) : hasSearch ? (
+          <p className="articles-empty-search">За запитом «{searchQuery.trim()}» статей не знайдено.</p>
+        ) : (
+          <p style={{ margin: 0 }}>Статей поки немає.</p>
+        )}
       </div>
     </section>
   );

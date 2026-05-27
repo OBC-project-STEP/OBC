@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { useDebouncedValue } from "./hooks/useDebouncedValue";
 
 import Layout from "./components/layout/Layout";
 import Banner from "./components/banner/Banner";
@@ -28,17 +30,19 @@ import Legal from "./components/footer-components/Legal";
 import Certification from "./components/footer-components/Certification";
 import ReviewsPage from "./components/footer-components/Reviews";
 
-function HomePage()
-{
-    return (
-        <>
-            <Banner />
-            <ArticlesSection />
-            <WorkSection />
-            <Reviews />
-            <OffersSection />
-        </>
-    );
+function HomePage() {
+  const [searchInput, setSearchInput] = useState("");
+  const searchQuery = useDebouncedValue(searchInput, 250);
+
+  return (
+    <>
+      <Banner searchQuery={searchInput} onSearchChange={setSearchInput} />
+      <ArticlesSection searchQuery={searchQuery} />
+      <WorkSection />
+      <Reviews />
+      <OffersSection />
+    </>
+  );
 }
 
 function App()

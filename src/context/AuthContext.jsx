@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshUser = useCallback(async () => {
+  const refreshUser = useCallback(async ({ silent = false } = {}) => {
     const token = getStoredToken();
     if (!token) {
       setUser(null);
@@ -24,7 +24,9 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    setLoading(true);
+    if (!silent) {
+      setLoading(true);
+    }
 
     for (let attempt = 0; attempt < AUTH_RETRY_ATTEMPTS; attempt += 1) {
       try {
@@ -43,7 +45,6 @@ export function AuthProvider({ children }) {
         const canRetry =
           err?.isNetworkError && attempt < AUTH_RETRY_ATTEMPTS - 1;
         if (!canRetry) {
-          // Токен зберігаємо — після перезапуску бекенду сесія відновиться
           setLoading(false);
           return;
         }
@@ -61,6 +62,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (email, password) => {
     const data = await apiPost("/auth/login", { email, password }, { useAuth: false });
     setStoredToken(data.access_token);
+    setLoading(false);
     try {
       const me = await apiGet("/auth/me");
       setUser(me.user);
@@ -73,6 +75,7 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (payload) => {
     const data = await apiPost("/auth/register", payload, { useAuth: false });
     setStoredToken(data.access_token);
+    setLoading(false);
     try {
       const me = await apiGet("/auth/me");
       setUser(me.user);
@@ -85,6 +88,7 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => {
     setStoredToken(null);
     setUser(null);
+    setLoading(false);
   }, []);
 
   const value = useMemo(

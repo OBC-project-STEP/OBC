@@ -1,6 +1,6 @@
 import "./Knowledge.css";
 
-export default function Search() {
+export default function Search({ searchQuery = "", onSearchChange }) {
   return (
     <section className="knowledge-search">
       <h2 className="knowledge-search-title">
@@ -9,8 +9,11 @@ export default function Search() {
 
       <div className="knowledge-search-input">
         <input
-          type="text"
+          type="search"
           placeholder="Яку проблему хочете вирішити?"
+          value={searchQuery}
+          onChange={(e) => onSearchChange?.(e.target.value)}
+          aria-label="Пошук статей"
         />
       </div>
     </section>

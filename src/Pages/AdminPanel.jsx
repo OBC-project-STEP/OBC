@@ -173,7 +173,7 @@ export default function AdminPanel() {
   };
 
   useEffect(() => {
-    refreshUser();
+    refreshUser({ silent: true });
   }, [refreshUser]);
 
   useEffect(() => {

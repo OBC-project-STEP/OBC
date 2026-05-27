@@ -23,9 +23,8 @@ function displayNameFromParts(name, surname, emailFallback) {
 }
 
 export default function ProfilePage() {
-  const { user, logout, refreshUser, loading } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
-  const syncing = loading;
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
@@ -44,11 +43,9 @@ export default function ProfilePage() {
     setName(user.name ?? "");
     setSurname(user.surname ?? "");
     setPhone(user.phone ?? "");
-  }, [user]);
+  }, [user?.id, user?.name, user?.surname, user?.phone]);
 
   useEffect(() => {
-    if (syncing) return;
-
     if (!user) {
       setSavedArticles([]);
       setArticleMetaMap({});
@@ -57,6 +54,7 @@ export default function ProfilePage() {
 
     if (user.role !== "user") {
       setSavedArticles([]);
+      setArticleMetaMap({});
       return;
     }
 
@@ -81,7 +79,7 @@ export default function ProfilePage() {
     return () => {
       cancelled = true;
     };
-  }, [user, syncing]);
+  }, [user?.id, user?.role]);
 
   const handleRemoveSaved = async (slug) => {
     setSavedError("");
@@ -125,7 +123,7 @@ export default function ProfilePage() {
         surname: surname.trim(),
         phone: phone.trim() || null,
       });
-      await refreshUser();
+      await refreshUser({ silent: true });
       setSuccess("Зміни збережено.");
     } catch (err) {
       setError(err.message || "Не вдалося зберегти");
@@ -173,7 +171,6 @@ export default function ProfilePage() {
                 </Link>
               ) : null}
             </p>
-            {syncing ? <p className="profile-sync">Оновлення даних…</p> : null}
           </div>
         </div>
 
@@ -232,7 +229,7 @@ export default function ProfilePage() {
           </label>
 
           <div className="profile-form-actions">
-            <button type="submit" className="profile-btn profile-btn--primary" disabled={saving || syncing}>
+            <button type="submit" className="profile-btn profile-btn--primary" disabled={saving}>
               {saving ? "Збереження…" : "Зберегти зміни"}
             </button>
             <button type="button" className="profile-btn profile-btn--ghost" onClick={handleReset} disabled={saving}>

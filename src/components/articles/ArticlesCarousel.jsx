@@ -32,7 +32,11 @@ function useCarouselMetrics(viewportRef, articleCount) {
       const gaps = Math.max(0, visible - 1) * GAP_PX;
       const slideW = Math.max(0, (vw - gaps) / visible);
       const step = slideW + GAP_PX;
-      setMetrics({ visible, step, slideW });
+      setMetrics((prev) => {
+        const next = { visible, step, slideW };
+        if (next.slideW === 0 && prev.slideW > 0) return prev;
+        return next;
+      });
     };
 
     measure();
@@ -52,12 +56,27 @@ export default function ArticlesCarousel({ articles }) {
   const n = articles.length;
   const viewportRef = useRef(null);
   const [startIndex, setStartIndex] = useState(0);
+  const [skipTrackTransition, setSkipTrackTransition] = useState(false);
   const metrics = useCarouselMetrics(viewportRef, n);
 
   const maxStart = useMemo(
     () => Math.max(0, n - metrics.visible),
     [n, metrics.visible]
   );
+
+  const articlesKey = useMemo(
+    () => articles.map((article) => article.id).join("|"),
+    [articles]
+  );
+
+  useEffect(() => {
+    setSkipTrackTransition(true);
+    setStartIndex(0);
+    const frame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setSkipTrackTransition(false));
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [articlesKey]);
 
   useEffect(() => {
     setStartIndex((i) => Math.min(i, maxStart));
@@ -102,7 +121,7 @@ export default function ArticlesCarousel({ articles }) {
 
       <div ref={viewportRef} className="articles-carousel-viewport">
         <div
-          className="articles-carousel-track"
+          className={`articles-carousel-track${skipTrackTransition ? " articles-carousel-track--instant" : ""}`}
           style={{
             gap: `${GAP_PX}px`,
             transform:

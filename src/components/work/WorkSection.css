@@ -1,0 +1,71 @@
+.work-section {
+    background-color: #ffffff;
+    padding: 80px 0;
+    width: 100%;
+    color: black;
+  }
+  
+  .work-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  
+  .work-title {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 900;
+    margin-bottom: 60px;
+  }
+  
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+  
+  .work-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .work-card img {
+    width: 100%;
+    border-radius: 32px;
+    margin-bottom: 24px;
+  }
+  
+  .work-card h3 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .work-card p {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  @media (max-width: 900px) {
+    .work-grid {
+      grid-template-columns: 1fr;
+      gap: 56px;
+    }
+  
+    .work-card img {
+      max-width: 420px;
+      margin: 0 auto 24px;
+    }
+  
+    .work-card h3 {
+      min-height: auto;
+    }
+  }
+  

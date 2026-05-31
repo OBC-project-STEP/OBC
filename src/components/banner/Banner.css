@@ -1,0 +1,118 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* === Banner Section === */
+.banner {
+  width: 100vw;
+  height: 100vh;
+
+  background-image: url("../../assets/images/Banner-background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  padding: 0 20px;
+
+  /* ✔ вот это убирает “лишний воздух сверху” */
+  margin-top: -19px;
+}
+
+
+/* === Content === */
+.banner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+
+  max-width: 900px;
+  width: 100%;
+}
+
+.banner-container h1 {
+  background-color: #0D00FF;
+  color: #FFFFFF;
+
+  font-size: 42px;
+  font-weight: 800;
+
+  border-radius: 60px;
+  padding: 25px 50px;
+
+  line-height: 1.2;
+  text-align: center;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* ========================= */
+/* 🔥 SEARCH (slightly smaller box) */
+/* ========================= */
+
+.search-container {
+  position: relative;
+
+  /* ⬇️ было 560px → чуть меньше */
+  max-width: 540px;
+  width: 540px;
+
+  margin: 0 auto;
+
+  background: #ffffff;
+  border-radius: 999px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* input (unchanged to preserve alignment) */
+.search-container input {
+  width: 100%;
+
+  padding: 20px 24px 20px 60px;
+
+  border-radius: 999px;
+  border: none;
+  outline: none;
+
+  font-size: 16px;
+  color: #000000;
+
+  background: transparent;
+
+  font-family: inherit;
+}
+
+/* placeholder */
+.search-container input::placeholder {
+  color: #838282;
+  font-size: 19px;
+}
+
+/* icon */
+.search-container::before {
+  content: "🔍";
+
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  opacity: 0.75;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .search-container {
+    width: 100%;
+  }
+}

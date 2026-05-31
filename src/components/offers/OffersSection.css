@@ -1,0 +1,79 @@
+.offers-section {
+    background-color: #000;
+    color: #fff;
+    padding: 80px 40px;
+  }
+  
+  .offers-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 60px;
+  }
+  
+  .offers-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto 80px;
+  }
+  
+  .offer-card {
+    background-color: #fff;
+    color: #000;
+    border-radius: 28px;
+    padding: 32px 28px;
+  }
+  
+  .offer-card-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  
+  .offer-list {
+    padding-left: 18px;
+  }
+  
+  .offer-list li {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  
+  .offers-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  
+  .offers-cta-text {
+    font-size: 28px;
+    font-weight: 600;
+  }
+  
+  .offers-arrow {
+    font-size: 32px;
+  }
+  
+  .offers-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #1f28ff;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .offers-button:hover {
+    opacity: 0.9;
+  }
+  

@@ -113,12 +113,18 @@ class ArticleCreateBody(BaseModel):
     title: str = Field(min_length=1, max_length=500)
     body: str = Field(default="", max_length=200_000)
     image: str = Field(default="placeholder", max_length=15_000_000)
+    is_paid: bool = False
 
 
 class ArticleUpdateBody(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=500)
     body: str | None = Field(default=None, max_length=200_000)
     image: str | None = Field(default=None, max_length=15_000_000)
+    is_paid: bool | None = None
+
+
+class PurchaseArticleBody(BaseModel):
+    slug: str = Field(min_length=1, max_length=120, pattern=r"^[a-z0-9-]+$")
 
 
 # --- JWT ---
@@ -497,12 +503,41 @@ def _get_user_row_by_id(conn: sqlite3.Connection, user_id: int) -> sqlite3.Row |
 
 
 def _article_row_public(row: sqlite3.Row) -> dict:
+    is_paid = row["is_paid"] if "is_paid" in row.keys() else 0
     return {
         "id": row["id"],
         "title": row["title"],
         "body": row["body"] or "",
         "image": row["image"] or "placeholder",
         "created_at": row["created_at"],
+        "is_paid": bool(is_paid),
+    }
+
+
+def _user_has_subscription(conn: sqlite3.Connection, user_id: int) -> bool:
+    row = conn.execute(
+        "SELECT user_id FROM user_subscriptions WHERE user_id = ?",
+        (user_id,),
+    ).fetchone()
+    return row is not None
+
+
+def _user_purchased_slugs(conn: sqlite3.Connection, user_id: int) -> list[str]:
+    rows = conn.execute(
+        """
+        SELECT article_slug FROM user_purchased_articles
+        WHERE user_id = ?
+        ORDER BY datetime(purchased_at) DESC
+        """,
+        (user_id,),
+    ).fetchall()
+    return [r["article_slug"] for r in rows]
+
+
+def _subscription_status_for_user(conn: sqlite3.Connection, user_id: int) -> dict:
+    return {
+        "subscribed": _user_has_subscription(conn, user_id),
+        "purchased_slugs": _user_purchased_slugs(conn, user_id),
     }
 
 
@@ -512,7 +547,7 @@ def public_list_articles():
     with get_db() as conn:
         rows = conn.execute(
             """
-            SELECT id, title, body, image, created_at
+            SELECT id, title, body, image, created_at, is_paid
             FROM articles
             ORDER BY datetime(created_at) DESC, id DESC
             """
@@ -525,7 +560,7 @@ def public_get_article(article_id: str):
     """Публічне читання статті за id."""
     with get_db() as conn:
         row = conn.execute(
-            "SELECT id, title, body, image, created_at FROM articles WHERE id = ?",
+            "SELECT id, title, body, image, created_at, is_paid FROM articles WHERE id = ?",
             (article_id,),
         ).fetchone()
     if not row:
@@ -538,7 +573,7 @@ def admin_list_articles(staff: StaffUser):
     with get_db() as conn:
         rows = conn.execute(
             """
-            SELECT id, title, body, image, created_at
+            SELECT id, title, body, image, created_at, is_paid
             FROM articles
             ORDER BY datetime(created_at) DESC, id DESC
             """
@@ -554,11 +589,11 @@ def admin_create_article(body: ArticleCreateBody, staff: StaffUser):
     img = (body.image or "").strip() or "placeholder"
     with get_db() as conn:
         conn.execute(
-            "INSERT INTO articles (id, title, body, image) VALUES (?, ?, ?, ?)",
-            (aid, title, b, img),
+            "INSERT INTO articles (id, title, body, image, is_paid) VALUES (?, ?, ?, ?, ?)",
+            (aid, title, b, img, 1 if body.is_paid else 0),
         )
         row = conn.execute(
-            "SELECT id, title, body, image, created_at FROM articles WHERE id = ?",
+            "SELECT id, title, body, image, created_at, is_paid FROM articles WHERE id = ?",
             (aid,),
         ).fetchone()
     return {"article": _article_row_public(row)}
@@ -582,6 +617,9 @@ def admin_update_article(article_id: str, body: ArticleUpdateBody, staff: StaffU
         if body.image is not None:
             parts.append("image = ?")
             vals.append(body.image.strip() or "placeholder")
+        if body.is_paid is not None:
+            parts.append("is_paid = ?")
+            vals.append(1 if body.is_paid else 0)
 
         if parts:
             vals.append(article_id)
@@ -591,7 +629,7 @@ def admin_update_article(article_id: str, body: ArticleUpdateBody, staff: StaffU
             )
 
         row = conn.execute(
-            "SELECT id, title, body, image, created_at FROM articles WHERE id = ?",
+            "SELECT id, title, body, image, created_at, is_paid FROM articles WHERE id = ?",
             (article_id,),
         ).fetchone()
     return {"article": _article_row_public(row)}
@@ -604,6 +642,63 @@ def admin_delete_article(article_id: str, staff: StaffUser):
         if cur.rowcount == 0:
             raise HTTPException(status_code=404, detail="Статтю не знайдено")
     return {"detail": "Статтю видалено"}
+
+
+@app.get("/auth/me/subscription")
+def get_subscription(user: EndUser):
+    uid = user["id"]
+    with get_db() as conn:
+        status = _subscription_status_for_user(conn, uid)
+    return status
+
+
+@app.post("/auth/me/subscription")
+def subscribe(user: EndUser):
+    """Оформити підписку (мок оплати $39/міс)."""
+    uid = user["id"]
+    with get_db() as conn:
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO user_subscriptions (user_id)
+            VALUES (?)
+            """,
+            (uid,),
+        )
+        status = _subscription_status_for_user(conn, uid)
+    return {"ok": True, **status}
+
+
+@app.delete("/auth/me/subscription")
+def unsubscribe(user: EndUser):
+    uid = user["id"]
+    with get_db() as conn:
+        conn.execute("DELETE FROM user_subscriptions WHERE user_id = ?", (uid,))
+        status = _subscription_status_for_user(conn, uid)
+    return {"ok": True, **status}
+
+
+@app.post("/auth/me/purchase-article")
+def purchase_article(body: PurchaseArticleBody, user: EndUser):
+    """Купити окрему статтю (мок оплати $9)."""
+    uid = user["id"]
+    slug = body.slug.strip()
+    with get_db() as conn:
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO user_purchased_articles (user_id, article_slug)
+            VALUES (?, ?)
+            """,
+            (uid, slug),
+        )
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO user_saved_articles (user_id, article_slug)
+            VALUES (?, ?)
+            """,
+            (uid, slug),
+        )
+        status = _subscription_status_for_user(conn, uid)
+    return {"ok": True, "slug": slug, **status}
 
 
 @app.get("/admin/users")

@@ -120,7 +120,10 @@ def init_db():
         _migrate_fix_null_roles(conn)
         _migrate_legacy_superadmin_email(conn)
         _ensure_articles_table(conn)
+        _migrate_articles_is_paid(conn)
         _ensure_user_saved_articles_table(conn)
+        _ensure_user_subscriptions_table(conn)
+        _ensure_user_purchased_articles_table(conn)
         _seed_demo_articles_if_empty(conn)
 
 
@@ -135,6 +138,42 @@ def _ensure_articles_table(conn: sqlite3.Connection) -> None:
             created_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
         CREATE INDEX IF NOT EXISTS idx_articles_created_at ON articles(created_at DESC);
+        """
+    )
+
+
+def _migrate_articles_is_paid(conn: sqlite3.Connection) -> None:
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(articles)").fetchall()]
+    if "is_paid" not in cols:
+        conn.execute(
+            "ALTER TABLE articles ADD COLUMN is_paid INTEGER NOT NULL DEFAULT 0"
+        )
+
+
+def _ensure_user_subscriptions_table(conn: sqlite3.Connection) -> None:
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS user_subscriptions (
+            user_id INTEGER PRIMARY KEY,
+            subscribed_at TEXT NOT NULL DEFAULT (datetime('now')),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        """
+    )
+
+
+def _ensure_user_purchased_articles_table(conn: sqlite3.Connection) -> None:
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS user_purchased_articles (
+            user_id INTEGER NOT NULL,
+            article_slug TEXT NOT NULL,
+            purchased_at TEXT NOT NULL DEFAULT (datetime('now')),
+            PRIMARY KEY (user_id, article_slug),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_user_purchased_user
+        ON user_purchased_articles(user_id, purchased_at DESC);
         """
     )
 

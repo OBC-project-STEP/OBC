@@ -379,6 +379,10 @@ a.profile-saved-card-link {
   color: #111;
 }
 
+.profile-plan-title--muted {
+  color: #666;
+}
+
 .profile-plan-desc {
   margin: 0 0 22px;
   max-width: 920px;
@@ -436,10 +440,19 @@ a.profile-saved-card-link {
   opacity: 0.92;
 }
 
+.profile-plan-change-btn--wide {
+  margin-bottom: 8px;
+}
+
 .profile-plan-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+.profile-plan-actions--single {
+  grid-template-columns: 1fr;
+  max-width: 320px;
 }
 
 .profile-plan-btn {

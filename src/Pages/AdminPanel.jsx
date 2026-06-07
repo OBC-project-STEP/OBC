@@ -33,11 +33,13 @@ export default function AdminPanel() {
   const [articlesError, setArticlesError] = useState(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [isPaid, setIsPaid] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const [editingArticleId, setEditingArticleId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
+  const [editIsPaid, setEditIsPaid] = useState(false);
   const [editPreviewUrl, setEditPreviewUrl] = useState(null);
   const [editPendingImageUrl, setEditPendingImageUrl] = useState(null);
 
@@ -87,9 +89,15 @@ export default function AdminPanel() {
       }
     }
     try {
-      await apiPost("/admin/articles", { title: trimmed, body: body.trim(), image });
+      await apiPost("/admin/articles", {
+        title: trimmed,
+        body: body.trim(),
+        image,
+        is_paid: isPaid,
+      });
       setTitle("");
       setBody("");
+      setIsPaid(false);
       setPreviewUrl((prev) => {
         revokeIfBlob(prev);
         return null;
@@ -109,6 +117,7 @@ export default function AdminPanel() {
     setEditingArticleId(null);
     setEditTitle("");
     setEditBody("");
+    setEditIsPaid(false);
     setEditPreviewUrl(null);
     if (editFileRef.current) editFileRef.current.value = "";
   };
@@ -118,6 +127,7 @@ export default function AdminPanel() {
     setEditingArticleId(article.id);
     setEditTitle(article.title);
     setEditBody(article.body ?? "");
+    setEditIsPaid(Boolean(article.is_paid));
     setEditPreviewUrl(resolveArticleThumb(article.image));
   };
 
@@ -135,7 +145,7 @@ export default function AdminPanel() {
     const trimmed = editTitle.trim();
     if (!trimmed || !editingArticleId) return;
     const file = editFileRef.current?.files?.[0];
-    const payload = { title: trimmed, body: editBody.trim() };
+    const payload = { title: trimmed, body: editBody.trim(), is_paid: editIsPaid };
     if (file) {
       try {
         payload.image = await fileToDataUrl(file);
@@ -236,6 +246,9 @@ export default function AdminPanel() {
                       <img src={resolveArticleThumb(article.image)} alt="" />
                     </div>
                     <h3 className="admin-article-card__name">{article.title}</h3>
+                    <p className="admin-article-card__tier">
+                      {article.is_paid ? "Платна · З підпискою" : "Безкоштовна"}
+                    </p>
                     <div className="admin-article-card__actions">
                       <button
                         type="button"
@@ -297,6 +310,14 @@ export default function AdminPanel() {
               rows={12}
               aria-label="Текст статті"
             />
+            <label className="admin-constructor__paid-toggle">
+              <input
+                type="checkbox"
+                checked={isPaid}
+                onChange={(e) => setIsPaid(e.target.checked)}
+              />
+              Платна стаття (доступ за підпискою або $9)
+            </label>
           </div>
           <div className="admin-panel__actions">
             <button type="button" className="admin-panel__primary" onClick={addArticle}>
@@ -352,6 +373,14 @@ export default function AdminPanel() {
                   onChange={(e) => setEditBody(e.target.value)}
                   rows={8}
                 />
+              </label>
+              <label className="admin-constructor__paid-toggle">
+                <input
+                  type="checkbox"
+                  checked={editIsPaid}
+                  onChange={(e) => setEditIsPaid(e.target.checked)}
+                />
+                Платна стаття (доступ за підпискою або $9)
               </label>
               <div className="admin-users__modal-actions">
                 <button type="button" className="admin-users__btn-secondary" onClick={() => closeArticleEditor()}>

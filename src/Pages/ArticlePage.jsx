@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import { saveArticleForLater } from "../api/savedArticles";
 import { fetchArticleById } from "../api/articles";
+import { fetchSubscription, hasArticleAccess } from "../api/subscription";
+import PaywallModal from "../components/articles/PaywallModal";
 import { useAuth } from "../context/AuthContext";
 import { getHomeArticleBySlug, getLegacySlugForDbId } from "../data/homeArticles";
 import { articleDetails } from "../data/articleDetails";
@@ -24,6 +26,9 @@ export default function ArticlePage() {
   const [remote, setRemote] = useState(null);
   const [remoteLoading, setRemoteLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [subscription, setSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const legacySlug = slug ? getLegacySlugForDbId(slug) : null;
   const contentSlug = legacySlug || slug;
@@ -59,6 +64,29 @@ export default function ArticlePage() {
     };
   }, [slug, legacySlug, hasLocalContent]);
 
+  useEffect(() => {
+    if (!user || user.role !== "user") {
+      setSubscription(null);
+      return undefined;
+    }
+
+    let alive = true;
+    (async () => {
+      setSubscriptionLoading(true);
+      try {
+        const res = await fetchSubscription();
+        if (alive) setSubscription(res);
+      } catch {
+        if (alive) setSubscription({ subscribed: false, purchased_slugs: [] });
+      } finally {
+        if (alive) setSubscriptionLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [user?.id, user?.role]);
+
   const remoteBody = String(remote?.body ?? "").trim();
   const useLocalContent = hasLocalContent && (!remote || !remoteBody);
 
@@ -80,6 +108,27 @@ export default function ArticlePage() {
 
   const showSaveToProfile = !user || user.role === "user";
   const saveSlug = contentSlug || slug;
+  const isPaid = Boolean(remote?.is_paid);
+  const hasAccess = hasArticleAccess({
+    isPaid,
+    slug: saveSlug,
+    user,
+    subscription,
+  });
+
+  useEffect(() => {
+    if (isPaid && !hasAccess && !subscriptionLoading) {
+      setShowPaywall(true);
+    } else {
+      setShowPaywall(false);
+    }
+  }, [isPaid, hasAccess, subscriptionLoading]);
+
+  const handleAccessGranted = (status) => {
+    setSubscription(status);
+    setShowPaywall(false);
+    setSaveHint("Доступ відкрито.");
+  };
 
   const handleSaveToProfile = async () => {
     setSaveHint("");
@@ -175,42 +224,75 @@ export default function ArticlePage() {
           </div>
         </section>
 
-        <article className="article-page-body">
-          {useLocalContent ? (
-            <>
-              <p>{localDetail.intro}</p>
+        <div className={`article-page-body-wrap${!hasAccess && isPaid ? " article-page-body-wrap--locked" : ""}`}>
+          <article
+            className={`article-page-body${!hasAccess && isPaid ? " article-page-body--locked" : ""}`}
+            aria-hidden={!hasAccess && isPaid ? "true" : undefined}
+          >
+            {useLocalContent ? (
+              <>
+                <p>{localDetail.intro}</p>
 
-              {localDetail.sections.map((section, idx) => (
-                <section key={idx} className="article-page-section">
-                  <h2>{section.heading}</h2>
-                  {section.paragraph ? <p>{section.paragraph}</p> : null}
-                  {section.bullets?.length > 0 ? (
-                    <ul>
-                      {section.bullets.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  ) : null}
+                {localDetail.sections.map((section, idx) => (
+                  <section key={idx} className="article-page-section">
+                    <h2>{section.heading}</h2>
+                    {section.paragraph ? <p>{section.paragraph}</p> : null}
+                    {section.bullets?.length > 0 ? (
+                      <ul>
+                        {section.bullets.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </section>
+                ))}
+
+                <section className="article-page-conclusion">
+                  <h2 className="article-page-conclusion-title">
+                    <span className="article-page-conclusion-icon" aria-hidden="true">
+                      ✓
+                    </span>
+                    Висновок
+                  </h2>
+                  <p>{localDetail.conclusion}</p>
                 </section>
-              ))}
+              </>
+            ) : remoteParagraphs.length > 0 ? (
+              remoteParagraphs.map((p, i) => <p key={i}>{p}</p>)
+            ) : (
+              <p>Текст статті ще не додано.</p>
+            )}
+          </article>
 
-              <section className="article-page-conclusion">
-                <h2 className="article-page-conclusion-title">
-                  <span className="article-page-conclusion-icon" aria-hidden="true">
-                    ✓
-                  </span>
-                  Висновок
-                </h2>
-                <p>{localDetail.conclusion}</p>
-              </section>
-            </>
-          ) : remoteParagraphs.length > 0 ? (
-            remoteParagraphs.map((p, i) => <p key={i}>{p}</p>)
-          ) : (
-            <p>Текст статті ще не додано.</p>
-          )}
-        </article>
+          {!hasAccess && isPaid ? (
+            <div className="article-page-paywall">
+              <button
+                type="button"
+                className="article-page-paywall-cta"
+                onClick={() => setShowPaywall(true)}
+              >
+                Отримати доступ
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
+
+      {showPaywall && hasAccess === false && isPaid ? (
+        <div
+          className="article-page-paywall-overlay"
+          role="presentation"
+          onClick={() => setShowPaywall(false)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <PaywallModal
+              slug={saveSlug}
+              onClose={() => setShowPaywall(false)}
+              onAccessGranted={handleAccessGranted}
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

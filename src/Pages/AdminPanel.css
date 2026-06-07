@@ -228,6 +228,13 @@
   overflow: hidden;
 }
 
+.admin-article-card__tier {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #555;
+}
+
 .admin-article-card__actions {
   display: flex;
   flex-wrap: wrap;
@@ -351,6 +358,23 @@
 .admin-constructor__body::placeholder {
   color: #000000;
   opacity: 0.28;
+}
+
+.admin-constructor__paid-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-constructor__paid-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent, #0d00ff);
 }
 
 .admin-panel__actions {

@@ -7,6 +7,10 @@ export function bodyPreview(body, maxLen = 140) {
   return t.length > maxLen ? `${t.slice(0, maxLen)}…` : t;
 }
 
+export function articleBadge(article) {
+  return article?.is_paid ? "З підпискою" : "Безкоштовно";
+}
+
 export function apiArticleToCardMeta(article) {
   const id = String(article.id);
   const routeSlug = getLegacySlugForDbId(id) || id;
@@ -18,6 +22,8 @@ export function apiArticleToCardMeta(article) {
     description: bodyPreview(body) || "Відкрити статтю",
     image: article.image && article.image !== "placeholder" ? article.image : placeholderThumb,
     readHref: `/article/${encodeURIComponent(routeSlug)}`,
+    isPaid: Boolean(article.is_paid),
+    badge: articleBadge(article),
   };
 }
 

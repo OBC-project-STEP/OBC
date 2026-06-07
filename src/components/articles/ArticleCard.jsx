@@ -7,6 +7,7 @@ import "./ArticleCard.css";
 function badgeVariantFromLabel(text) {
   const t = String(text).toLowerCase();
   if (t.includes("безкоштовно")) return "green";
+  if (t.includes("підписк")) return "blue";
   if (t.includes("знижка")) return "red";
   if (t.includes("доступно")) return "yellow";
   return "blue";

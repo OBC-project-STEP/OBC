@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiPatch } from "../api/client";
 import { fetchArticles } from "../api/articles";
 import { fetchSavedArticles, removeSavedArticle } from "../api/savedArticles";
+import { fetchSubscription, subscribe, unsubscribe } from "../api/subscription";
 import { useAuth } from "../context/AuthContext";
 import { buildArticleMetaMap, resolveSavedArticleMeta } from "../utils/articleMeta";
 import "./ProfilePage.css";
@@ -35,6 +36,9 @@ export default function ProfilePage() {
   const [savedLoading, setSavedLoading] = useState(false);
   const [savedError, setSavedError] = useState("");
   const [articleMetaMap, setArticleMetaMap] = useState({});
+  const [subscription, setSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const [subscriptionBusy, setSubscriptionBusy] = useState(false);
   const [planModal, setPlanModal] = useState(null);
   const [planNotice, setPlanNotice] = useState("");
 
@@ -74,6 +78,29 @@ export default function ProfilePage() {
         if (!cancelled) setSavedError(e.message || "Не вдалося завантажити збережені статті");
       } finally {
         if (!cancelled) setSavedLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, user?.role]);
+
+  useEffect(() => {
+    if (!user || user.role !== "user") {
+      setSubscription(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    (async () => {
+      setSubscriptionLoading(true);
+      try {
+        const res = await fetchSubscription();
+        if (!cancelled) setSubscription(res);
+      } catch {
+        if (!cancelled) setSubscription({ subscribed: false, purchased_slugs: [] });
+      } finally {
+        if (!cancelled) setSubscriptionLoading(false);
       }
     })();
     return () => {
@@ -139,15 +166,36 @@ export default function ProfilePage() {
 
   const closePlanModal = () => setPlanModal(null);
 
-  const handleConfirmUnsubscribe = () => {
+  const handleConfirmUnsubscribe = async () => {
     setPlanModal(null);
-    setPlanNotice("Підписку скасовано.");
+    setSubscriptionBusy(true);
+    setPlanNotice("");
+    try {
+      const res = await unsubscribe();
+      setSubscription(res);
+      setPlanNotice("Підписку скасовано.");
+    } catch (e) {
+      setPlanNotice(e.message || "Не вдалося скасувати підписку");
+    } finally {
+      setSubscriptionBusy(false);
+    }
   };
 
-  const handlePauseSubscription = (months) => {
-    setPlanModal(null);
-    setPlanNotice(`Підписку поставлено на паузу на ${months} міс.`);
+  const handleSubscribeFromProfile = async () => {
+    setSubscriptionBusy(true);
+    setPlanNotice("");
+    try {
+      const res = await subscribe();
+      setSubscription(res);
+      setPlanNotice("Підписку оформлено. Доступ до Бази Знань відкрито.");
+    } catch (e) {
+      setPlanNotice(e.message || "Не вдалося оформити підписку");
+    } finally {
+      setSubscriptionBusy(false);
+    }
   };
+
+  const isSubscribed = Boolean(subscription?.subscribed);
 
   const roleLabel =
     user?.role === "superadmin" ? "Супер-адмін" : user?.role === "admin" ? "Адмін" : "Користувач";
@@ -305,13 +353,36 @@ export default function ProfilePage() {
 
           <div className="profile-plan-panel" aria-labelledby="profile-plan-heading">
             <p className="profile-plan-label">Ваш план:</p>
-            <h2 id="profile-plan-heading" className="profile-plan-title">
-              Premium access - XX USD/monthly
-            </h2>
-            <p className="profile-plan-desc">
-              Цей план надає доступ до ексклюзивних статей, доступ до чату 24/7 з кваліфікованими
-              експертами та індивідуальні консультації з конкретними кейсами
-            </p>
+            {subscriptionLoading ? (
+              <p className="profile-saved-panel-hint">Завантаження…</p>
+            ) : isSubscribed ? (
+              <>
+                <h2 id="profile-plan-heading" className="profile-plan-title">
+                  $39 / міс
+                </h2>
+                <p className="profile-plan-desc">
+                  Безлімітний доступ до всієї Бази Знань (всі статті, шаблони, відеоінструкції)
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 id="profile-plan-heading" className="profile-plan-title profile-plan-title--muted">
+                  У вас немає підписки
+                </h2>
+                <p className="profile-plan-desc">
+                  Оформіть підписку за $39 на місяць і отримайте безлімітний доступ до всієї Бази
+                  Знань — усі статті, шаблони та відеоінструкції.
+                </p>
+                <button
+                  type="button"
+                  className="profile-plan-change-btn profile-plan-change-btn--wide"
+                  onClick={handleSubscribeFromProfile}
+                  disabled={subscriptionBusy}
+                >
+                  {subscriptionBusy ? "Оформлення…" : "Підписатися — $39 / міс"}
+                </button>
+              </>
+            )}
 
             {planNotice ? (
               <p className="profile-plan-notice" role="status">
@@ -319,36 +390,18 @@ export default function ProfilePage() {
               </p>
             ) : null}
 
-            <div className="profile-plan-payment">
-              <span className="profile-plan-payment-label">Платіжні дані</span>
-              <input
-                className="profile-plan-card-input"
-                type="text"
-                value="123456XXXXXX7890"
-                readOnly
-                aria-label="Маскований номер картки"
-              />
-              <button type="button" className="profile-plan-change-btn">
-                Змінити план
-              </button>
-            </div>
-
-            <div className="profile-plan-actions">
-              <button
-                type="button"
-                className="profile-plan-btn profile-plan-btn--cancel"
-                onClick={() => setPlanModal("unsub")}
-              >
-                Відписатись
-              </button>
-              <button
-                type="button"
-                className="profile-plan-btn profile-plan-btn--pause"
-                onClick={() => setPlanModal("pause")}
-              >
-                Поставити на паузу
-              </button>
-            </div>
+            {isSubscribed ? (
+              <div className="profile-plan-actions profile-plan-actions--single">
+                <button
+                  type="button"
+                  className="profile-plan-btn profile-plan-btn--cancel"
+                  onClick={() => setPlanModal("unsub")}
+                  disabled={subscriptionBusy}
+                >
+                  Відписатись
+                </button>
+              </div>
+            ) : null}
           </div>
         </section>
       ) : null}
@@ -370,84 +423,29 @@ export default function ProfilePage() {
               ×
             </button>
             <h3 id="profile-unsub-modal-title" className="profile-plan-modal-title">
-              Можливо, поставити підписку на паузу?
+              Скасувати підписку?
             </h3>
             <p className="profile-plan-modal-text">
-              Якщо зараз сервіс вам тимчасово не потрібен, ви можете поставити підписку на паузу.
-            </p>
-            <p className="profile-plan-modal-text">
-              Ваші дані, історія та налаштування збережуться, і ви зможете повернутися у будь-який
-              момент.
+              Після скасування доступ до платних матеріалів Бази Знань буде закрито. Окремо
+              придбані статті залишаться у вашому профілі.
             </p>
             <div className="profile-plan-modal-actions profile-plan-modal-actions--stack">
               <button
                 type="button"
-                className="profile-plan-modal-btn profile-plan-modal-btn--pause"
-                onClick={() => setPlanModal("pause")}
-              >
-                Поставити на паузу
-              </button>
-              <button
-                type="button"
                 className="profile-plan-modal-btn profile-plan-modal-btn--cancel"
                 onClick={handleConfirmUnsubscribe}
+                disabled={subscriptionBusy}
               >
-                Відписатись
+                {subscriptionBusy ? "Скасування…" : "Так, відписатись"}
+              </button>
+              <button
+                type="button"
+                className="profile-plan-modal-btn profile-plan-modal-btn--pause"
+                onClick={closePlanModal}
+              >
+                Залишити підписку
               </button>
             </div>
-          </div>
-        </div>
-      ) : null}
-
-      {planModal === "pause" ? (
-        <div className="profile-plan-modal-overlay" role="presentation" onClick={closePlanModal}>
-          <div
-            className="profile-plan-modal"
-            role="dialog"
-            aria-labelledby="profile-pause-modal-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              className="profile-plan-modal-close"
-              aria-label="Закрити"
-              onClick={closePlanModal}
-            >
-              ×
-            </button>
-            <h3 id="profile-pause-modal-title" className="profile-plan-modal-title">
-              Поставити підписку на паузу
-            </h3>
-            <p className="profile-plan-modal-text">
-              Оберіть, на який час ви хочете призупинити підписку.
-            </p>
-            <div className="profile-plan-modal-duration">
-              <button
-                type="button"
-                className="profile-plan-duration-btn"
-                onClick={() => handlePauseSubscription(3)}
-              >
-                3 місяці
-              </button>
-              <button
-                type="button"
-                className="profile-plan-duration-btn"
-                onClick={() => handlePauseSubscription(6)}
-              >
-                6 місяців
-              </button>
-              <button
-                type="button"
-                className="profile-plan-duration-btn"
-                onClick={() => handlePauseSubscription(12)}
-              >
-                12 місяців
-              </button>
-            </div>
-            <p className="profile-plan-modal-footnote">
-              У цей період доступ до сервісу буде тимчасово обмежений, але ваші дані та історія
-              залишаться збереженими.
-            </p>
           </div>
         </div>
       ) : null}

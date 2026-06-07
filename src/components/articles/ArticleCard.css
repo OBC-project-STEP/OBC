@@ -1,0 +1,160 @@
+.article-card {
+  background-color: #ffffff;
+  border-radius: 36px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  width: 100%;
+  max-width: 380px;
+  flex-shrink: 0;
+
+  height: 100%;
+}
+
+/* IMAGE */
+.article-image {
+  position: relative;
+  overflow: hidden;
+  height: 380px;
+  flex-shrink: 0;
+}
+
+.article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* BADGES */
+.article-badges {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+
+.article-badge {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #000;
+  white-space: nowrap;
+}
+
+.article-badge.green { background: #20d000; }
+.article-badge.yellow { background: #ffeb00; }
+.article-badge.blue { background: #1c1cff; color: #fff; }
+.article-badge.red { background: #ff0000; color: #000; }
+
+/* CONTENT */
+.article-content {
+  padding: 18px 18px 10px;
+  color: #000;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  flex: 1;
+
+  /* 🔥 ВОТ ГЛАВНОЕ */
+  gap: 18px;
+}
+
+/* TITLE */
+.article-content h3 {
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.2;
+
+  height: 56px;
+
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* DESCRIPTION */
+.article-content p {
+  font-size: 14px;
+  color: #222;
+  line-height: 1.45;
+  text-align: center;
+
+  margin: 0;
+}
+
+/* ACTIONS */
+.article-actions {
+  margin-top: auto;
+  padding: 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+/* rest unchanged */
+.article-actions a,
+.article-actions-linklike {
+  font-weight: 900;
+  color: #000;
+  text-decoration: underline;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 120px;
+  text-align: center;
+
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.article-actions-linklike:hover:not(:disabled) {
+  color: #0d00ff;
+}
+
+.article-actions-linklike:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.article-actions-muted {
+  font-weight: 900;
+  color: #999;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+
+  min-width: 120px;
+  text-align: center;
+}
+
+/* SAVE HINT */
+.article-save-hint {
+  margin: 0;
+  padding: 0 18px 12px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #0d5c26;
+  font-weight: 600;
+  text-align: center;
+}

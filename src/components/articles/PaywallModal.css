@@ -1,0 +1,131 @@
+.paywall-modal {
+  position: relative;
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: 28px 24px 24px;
+  background: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  text-align: center;
+}
+
+.paywall-modal--compact {
+  width: 100%;
+}
+
+.paywall-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.paywall-modal__close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.paywall-modal__eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0d00ff;
+}
+
+.paywall-modal__title {
+  margin: 0 0 10px;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 800;
+  color: #111;
+}
+
+.paywall-modal__text {
+  margin: 0 0 18px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #333;
+}
+
+.paywall-modal__error {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #ffe8e8;
+  color: #8a0000;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.paywall-modal__options {
+  display: grid;
+  gap: 12px;
+}
+
+.paywall-modal__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 2px solid #d8d8d8;
+  border-radius: 20px;
+  background: #fafafa;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.paywall-modal__option:hover:not(:disabled) {
+  border-color: #0d00ff;
+  transform: translateY(-1px);
+}
+
+.paywall-modal__option:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.paywall-modal__option--primary {
+  border-color: #0d00ff;
+  background: #f3f2ff;
+}
+
+.paywall-modal__price {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #111;
+}
+
+.paywall-modal__option-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #111;
+}
+
+.paywall-modal__option-desc {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  font-weight: 500;
+  color: #444;
+}
+
+.paywall-modal__footnote {
+  margin: 16px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #555;
+}
+
+.paywall-modal__footnote a {
+  color: #0d00ff;
+  font-weight: 700;
+}

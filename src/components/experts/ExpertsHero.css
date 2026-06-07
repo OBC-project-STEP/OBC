@@ -1,0 +1,66 @@
+.experts-hero {
+  width: 100%;
+  min-height: 420px;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ margin-top: -19px;
+  padding: 160px 32px 80px; /* 👈 ВАЖНО */
+}
+
+
+
+.experts-hero-inner {
+  max-width: 1300px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.experts-hero-card {
+  background: #1a18ff;
+  color: #ffffff;
+
+  border-radius: 64px;
+  padding: 48px 64px;
+
+  max-width: 1100px;
+  width: 100%;
+
+  text-align: center;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.experts-hero-card h1 {
+  font-size: 44px;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.experts-hero-card p {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .experts-hero-card {
+    padding: 32px 24px;
+    border-radius: 40px;
+  }
+
+  .experts-hero-card h1 {
+    font-size: 28px;
+  }
+
+  .experts-hero-card p {
+    font-size: 16px;
+  }
+}
